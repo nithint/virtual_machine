@@ -74,8 +74,9 @@ void jc::jc_load(int n)
 		map<unsigned int, int>::iterator it;
 
 		// check if this localvar exists in map
+		// find returns ptr to end of map on failure to find key
 		it = localVars.find(n);
-		if(it != map<unsigned int, int>::end)
+		if(it != localVars.end())
 		{
 			// localVar exists
 			stackPtr->Push(it->second);
