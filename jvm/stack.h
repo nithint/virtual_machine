@@ -12,10 +12,10 @@ class Stack {
     
     void Push(int i); // Push an integer, checking for overflow.
     int Pop();        // Pop an integer, checking for underflow.
-    
+    int Peek();			// Peek at the value at top w/o popping it out
     int Full();       // Returns non-0 if the stack is full, 0 otherwise.
     int Empty();      // Returns non-0 if the stack is empty, 0 otherwise.
-
+	int Size();			// Returns the number of elements in the stack
     // You may need the following methods 
     //    if you store the local variables in the stack
     int Get_top();    // return the value of the private member: top

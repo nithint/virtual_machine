@@ -9,6 +9,15 @@
 
 using namespace std;
 
+	// Lookup table of supported opcodes
+const string validOpCodes[] = {"const", "pop", "store", "load", "add", "sub", "mul", "div", "p" };
+
+int main()
+{
+	jc calc(1);
+	
+}
+
 jc::jc()
 {
 	// TODO Auto-generated constructor stub

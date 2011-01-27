@@ -7,7 +7,8 @@
 #include "stack.h"
 #include <map>
 #include <vector>
-
+#include <cstdlib>
+#include <iostream>
 
 using namespace std;
 using std::pair;
@@ -38,18 +39,21 @@ public:
 	int jc_pop();
 	//INSTR: const x: push the const integer onto the stack ( bounds check performed by Stack's member fns)
 	void jc_push(int x);
-	// main function: reads instructions from commandline one by one and executes them
-	static int main(int argc, char *argv[]);
+	// execute the given command
+	virtual void execute(vector<string> commandParts);
+	
+	// array to store valid opcodes
+	static string validOpCodes[];
 
 private:
 	Stack * stackPtr; //The Stack class provided
 	//Local variable mapping container
 	map<unsigned int, int> localVars;
-	// Lookup table of supported opcodes
-	string validOpcodes[9];
 	//{"const", "pop", "store", "load", "add", "sub", "mul", "div", "p" };
 	/**
 	 * array to store instructions
 	 */
 	vector<string> instructions;
 };
+
+string jc::validOpCodes[] = {"const", "pop", "store", "load", "add", "sub", "mul", "div", "p" };

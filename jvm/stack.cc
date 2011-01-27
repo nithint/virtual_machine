@@ -43,7 +43,7 @@ Stack::Push(int i)
 {
 	if (Full()) {
 	fprintf(stderr, "Error: Stack overflow\n");
-	exit(1);
+	//exit(1);
 	}
 	
 	stack[top++] = i;
@@ -54,10 +54,21 @@ Stack::Pop()
 {
 	if (Empty()) {
 	fprintf(stderr, "Error: Stack underflow\n");
-	exit(1);
+	//exit(1);
 	}
 	
 	return (stack[--top]);
+}
+
+int
+Stack::Peek()
+{
+	if (Empty()) {
+	fprintf(stderr, "Error: Stack underflow\n");
+	//exit(1);
+	}
+	
+	return (stack[top-1]);
 }
 
 int
@@ -78,6 +89,11 @@ int
 Stack::Get_top()
 {
 	return top ;
+}
+
+int Stack::Size()
+{
+	return this->Get_top();
 }
 
 int
