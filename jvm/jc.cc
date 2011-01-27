@@ -6,17 +6,59 @@
 
 #include "jc.h"
 #include <iostream>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <cstdio>
+#include <cstdlib>
+#include <algorithm>
+#include <iterator>
+#include <math.h>
+#include <vector>
+#include <string>
 
 using namespace std;
 
-	// Lookup table of supported opcodes
-const string validOpCodes[] = {"const", "pop", "store", "load", "add", "sub", "mul", "div", "p" };
 
-int main()
+	// main function: reads instructions from commandline one by one and executes them
+int main(int argc, char *argv[])
 {
-	jc calc(1);
-	
+	jc calc(1000);
+	string command;
+
+	while(!(command == "q"))
+	{
+		cout << "Enter a command (q to quit): ";
+		getline(cin,command);
+
+		// quit on q
+		if(command.compare("q") == 0)
+			exit(0);
+
+		// if empty, continue
+		if(command.length()==0)
+			continue;
+		
+		vector<string> parts = vector<string>();
+
+		// tokenize attributes
+		istringstream iss(command);
+		copy(istream_iterator<string>(iss),
+		istream_iterator<string>(),
+		back_inserter<vector<string> >(parts));
+
+		/*for(unsigned int i = 0; i < parts.size(); i++)
+		{
+			cout << parts.at(i) << endl;
+		}*/
+		
+		calc.execute(parts);
+	}
+
+  return 0;
 }
+
+/** CONSTRUCTORS/DESTRUCTORS **/
 
 jc::jc()
 {
@@ -39,6 +81,74 @@ jc::jc(int sz=1000)
 	*/
 }
 
+void jc::execute(vector<string> commandParts)
+{
+	if(!(commandParts.size() == 0))
+	{
+		if(commandParts.at(0).compare("const") == 0)
+		{
+			// verify that an argument was given 
+			if(commandParts.size() != 2)
+			{
+				cout << "ERROR: const opcode expects one argument" << endl;
+				exit(1);
+			}
+			// TODO: error checking needed for if argument is not a number
+			int argument = atoi(commandParts.at(1).c_str());
+			cout << "argument is " << argument << endl;
+			this->jc_push(argument);
+			return;
+		}
+		else if(commandParts.at(0).compare("p") == 0)
+		{
+			this->printTOS();
+		}
+		else if(commandParts.at(0).compare("store") == 0)
+		{
+			if(commandParts.size() != 2)
+			{
+				cout << "ERROR: store opcode expects one argument" << endl;
+				exit(1);
+			}
+			// TODO: error checking for nan
+			int argument = atoi(commandParts.at(1).c_str());
+			this->jc_store(argument);
+		}
+		else if(commandParts.at(0).compare("load") == 0)
+		{
+			if(commandParts.size() != 2)
+			{
+				cout << "ERROR: load opcode expects one argument" << endl;
+				exit(1);
+			}
+			// TODO: error checking for nan
+			int argument = atoi(commandParts.at(1).c_str());
+			this->jc_load(argument);
+		}
+		else if(commandParts.at(0).compare("add") == 0)
+		{
+			this->jc_add();
+		}
+		else if (commandParts.at(0).compare("sub") == 0)
+		{
+			this->jc_sub();
+		}
+		else if (commandParts.at(0).compare("mul") == 0)
+		{
+			this->jc_mul();
+		}
+		else if (commandParts.at(0).compare("div") == 0)
+		{
+			this->jc_div();
+		}
+		else
+		{
+			// undefined command
+			cout << "Invalid command" << endl;
+			exit(1);
+		}
+	}
+}
 
 //INSTR: const x: push the const integer onto the stack ( bounds check performed by Stack's member fns)
 void jc::jc_push( int x)
@@ -73,7 +183,6 @@ void jc::jc_store(int n)
 //INSTR: load n:Load the local variable n onto the stack
 void jc::jc_load(int n)
 {
-	int  value;
 	if(n<0)
 	{
 		fprintf(stderr, "Error: variable index should be non-negative\n");
@@ -102,6 +211,11 @@ void jc::jc_load(int n)
 //INSTR:add:pop tos twice and adds the elements and push result onto tos
 void jc::jc_add()
 {
+	if(stackPtr->Size() < 2)
+	{
+		cout << "error: stack emtpy" << endl;
+		return;
+	}
 	int top1 = stackPtr->Pop();
 	int top2 = stackPtr->Pop();
 	stackPtr->Push(top2+top1);
@@ -109,6 +223,11 @@ void jc::jc_add()
 
 void jc::jc_sub()
 {
+	if(stackPtr->Size() < 2)
+	{
+		cout << "error: stack emtpy" << endl;
+		return;
+	}
 	int top1 = stackPtr->Pop();
 	int top2 = stackPtr->Pop();
 	stackPtr->Push(top2-top1);
@@ -116,6 +235,11 @@ void jc::jc_sub()
 
 void jc::jc_mul()
 {
+	if(stackPtr->Size() < 2)
+	{
+		cout << "error: stack emtpy" << endl;
+		return;
+	}
 	int top1 = stackPtr->Pop();
 	int top2 = stackPtr->Pop();
 	stackPtr->Push(top2 * top1);
@@ -123,6 +247,11 @@ void jc::jc_mul()
 
 void jc::jc_div()
 {
+	if(stackPtr->Size() < 2)
+	{
+		cout << "error: stack emtpy" << endl;
+		return;
+	}
 	int top1 = stackPtr->Pop();
 	int top2 = stackPtr->Pop();
 	if(top1 == 0)
@@ -144,14 +273,9 @@ void jc::printTOS()
 	}
 	else
 	{
-		cout << "The topmost element is " << stackPtr->Get_top();
+		//cout << stackPtr->Pop();
+		cout << stackPtr->Peek() << endl;
 	}
-}
-
-//This fn reads and parses the command line
-void readCmd()
-{
-	//TBD
 }
 
 
