@@ -19,6 +19,16 @@
 
 using namespace std;
 
+/**
+* convert string to number
+*/
+template <class T>
+bool tryParse(T& t, 
+				 const std::string& s)
+{
+  std::istringstream iss(s);
+  return !(iss >> t).fail();
+}
 
 	// main function: reads instructions from commandline one by one and executes them
 int main(int argc, char *argv[])
@@ -81,6 +91,7 @@ jc::jc(int sz=1000)
 	*/
 }
 
+
 void jc::execute(vector<string> commandParts)
 {
 	if(!(commandParts.size() == 0))
@@ -94,10 +105,15 @@ void jc::execute(vector<string> commandParts)
 				exit(1);
 			}
 			// TODO: error checking needed for if argument is not a number
-			int argument = atoi(commandParts.at(1).c_str());
-			cout << "argument is " << argument << endl;
-			this->jc_push(argument);
-			return;
+			int argument;
+			if(tryParse(argument, commandParts.at(1).c_str()))
+			{
+				this->jc_push(argument);
+			}
+			else
+			{
+				cout << "Error: argument must be a number" << endl;
+			}
 		}
 		else if(commandParts.at(0).compare("p") == 0)
 		{
@@ -107,12 +123,18 @@ void jc::execute(vector<string> commandParts)
 		{
 			if(commandParts.size() != 2)
 			{
-				cout << "ERROR: store opcode expects one argument" << endl;
+				cout << "Error: store opcode expects one argument" << endl;
 				exit(1);
 			}
-			// TODO: error checking for nan
-			int argument = atoi(commandParts.at(1).c_str());
+			int argument;
+			if(tryParse(argument, commandParts.at(1).c_str()))
+			{
 			this->jc_store(argument);
+			}
+			else
+			{
+				cout << "Error: variable should be non-negative" << endl;
+			}
 		}
 		else if(commandParts.at(0).compare("load") == 0)
 		{
@@ -122,8 +144,15 @@ void jc::execute(vector<string> commandParts)
 				exit(1);
 			}
 			// TODO: error checking for nan
-			int argument = atoi(commandParts.at(1).c_str());
-			this->jc_load(argument);
+			int argument;
+			if(tryParse(argument, commandParts.at(1).c_str()))
+			{
+				this->jc_load(argument);
+			}
+			else
+			{
+				cout << "Error: variable index should be non-negative" << endl;
+			}
 		}
 		else if(commandParts.at(0).compare("add") == 0)
 		{
@@ -144,8 +173,7 @@ void jc::execute(vector<string> commandParts)
 		else
 		{
 			// undefined command
-			cout << "Invalid command" << endl;
-			exit(1);
+			cout << "Illegal opcode" << endl;
 		}
 	}
 }
