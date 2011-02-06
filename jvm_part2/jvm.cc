@@ -1,5 +1,8 @@
 #include "jvm.h"
-
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <iterator>
 
 /**
 * convert string to number
@@ -12,11 +15,6 @@ bool tryParse(T& t,
 	return !(iss >> t).fail();
 }
 
-jvm::jvm(void)
-{
-}
-
-
 jvm::~jvm(void)
 {
 }
@@ -27,11 +25,7 @@ jvm::jvm(int sz, vector<string> instrs, map<string, unsigned int> symTable)
 	// make new copy of the data structures
 	this->instructions = vector<string>(instrs);
 	this->symbolTable = map<string, unsigned int>(symTable);
-}
-
-jvm::jvm(int sz=1000)
-{
-	this->stackPtr = new Stack(sz);
+	this->pc = 0;
 }
 
 void jvm::execute(vector<string> commandParts)
@@ -115,9 +109,54 @@ void jvm::execute(vector<string> commandParts)
 				cout << "Error: argument 1 must be a number" << endl;
 			}
 		}
+		else
+		{
+			// call jc's methods
+			super::execute(commandParts);
+		}
 	}
+}
 
 	void jvm::execute()
 	{
+		unsigned int currentPC = 0;
+		this->pc = 0;
+		while(true)
+		{
+			// update program counter
+			// if a branch instr was executed in previous step, then don't 
+			// update pc, just use it
+			if(this->pc != 0 && this->pc == currentPC)
+			{
+				this->pc++;
+				currentPC++;
+			}
+			else
+			{
+				currentPC = this->pc;
+			}
+			// check that pc points to valid instruction
+			if(this->pc < this->instructions.size())
+			{
+				// valid loc - execute instruction
+				vector<string> parts = vector<string>();
+				string instr = this->instructions.at(this->pc);
 
+				// tokenize line
+				istringstream iss(instr);
+				copy(istream_iterator<string>(iss),
+					istream_iterator<string>(),
+					back_inserter<vector<string> >(parts));
+
+				// execute
+				this->execute(parts);
+			}
+			else
+			{
+				// out of bounds - means that we've finished execution or branched wrong
+				// exit
+				break;
+			}
+
+		}
 	}

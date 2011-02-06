@@ -11,14 +11,14 @@ class jvm :
 {
 
 private:
+	// base class (jc)
+	typedef jc super;
 	// program counter
 	unsigned int pc;
 	// symbol table for branching
 	map<string, unsigned int> symbolTable;
 public:
-	jvm(int sz=1000);
 	jvm(int sz, vector<string> instrs, map<string, unsigned int> symTable);
-	jvm(void);
 	~jvm(void);
 
 	virtual void execute(vector<string> commandParts);
