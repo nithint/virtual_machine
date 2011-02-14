@@ -9,7 +9,6 @@
 #include <math.h>
 #include <vector>
 #include <string>
-#include <math.h>
 
 using namespace std;
 using std::cout;
@@ -25,7 +24,7 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	ifstream fin(string(argv[1]));
+	ifstream fin(argv[1]);
 
 	if(!fin)
 	{

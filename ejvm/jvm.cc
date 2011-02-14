@@ -116,7 +116,31 @@ void jvm::execute(vector<string> commandParts)
 	}
 }
 
+void jvm::jvm_inc(int n, int x)
+{
+	if(n<0)
+	{
+		fprintf(stderr, "Error: variable index should be non-negative\n");
+	}
+	else
+	{
+		map<unsigned int, int>::iterator it;
 
+		// check if this localvar exists in map
+		// find returns ptr to end of map on failure to find key
+		it = localVars.find(n);
+		if(it != localVars.end())
+		{
+			// localVar exists
+			localVars[n] = localVars[n] + x;
+		}
+		else
+		{
+			// localVar doesn't exist
+			fprintf(stderr, "Error: local variable %d doesn't exist.", n);
+		}
+	}
+}
 
 void jvm::jvm_ifeq(string& label)
 {

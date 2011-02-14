@@ -1,11 +1,13 @@
 #pragma once
 #include "jvm.h"
+#include <stack>
 
 // instruction set additions for ejvm
 
 #define INVOKE "invoke"
 #define RETURN "return"
 #define FETCH "fetch"
+#define MAIN "main"
 
 class ejvm :
 	public jvm
@@ -19,6 +21,8 @@ public:
 	// execute over the whole set of instructions
 	virtual void execute();
 protected:
+	// call trace
+	stack<string> fnCalls;
 	// frame pointer
 	unsigned int fp;
 	// limit of local vars allowed in a subroutine
@@ -36,5 +40,7 @@ protected:
 	//INSTR:store n:pop tos and store the value into local variable n
 	// redefined to use stack instead of separate data structure
 	virtual void jc_store(int n);
+	//Increment instruction where n is local var and x is the amount to increment by
+	virtual void jvm_inc(int n, int x);
 };
 

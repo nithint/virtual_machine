@@ -202,7 +202,18 @@ void jc::jc_store(int n)
 	else
 	{
 		topElement = stackPtr->Pop();
-		localVars.insert(make_pair(n, topElement));
+		map<unsigned int, int>::iterator it;
+
+		// check if this localvar exists in map
+		// find returns ptr to end of map on failure to find key
+		it = localVars.find(n);
+		if(it == localVars.end())
+		{
+			// doesn't exist, create new
+			localVars.insert(make_pair(n, topElement));
+		}
+		else
+			localVars[n] = topElement;
 	}
 }
 
@@ -280,16 +291,17 @@ void jc::jc_div()
 		cout << "error: stack emtpy" << endl;
 		return;
 	}
-	int top1 = stackPtr->Pop();
-	int top2 = stackPtr->Pop();
+	// check if divisior is zero before popping
+	int top1 = stackPtr->Peek();
 	if(top1 == 0)
 	{
-		fprintf(stderr, "Error: division by zero attempted.");
+		fprintf(stderr, "Error: division by zero attempted.\n");
+		return;
 	}
-	else
-	{
-		stackPtr->Push(top2/top1);
-	}
+
+	top1 = stackPtr->Pop();
+	int top2 = stackPtr->Pop();
+	stackPtr->Push(top2/top1);
 }
 
 //INSTR:p:Just print the tos without popping

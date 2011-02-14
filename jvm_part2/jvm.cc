@@ -116,7 +116,31 @@ void jvm::execute(vector<string> commandParts)
 	}
 }
 
+void jvm::jvm_inc(int n, int x)
+{
+	if(n<0)
+	{
+		fprintf(stderr, "Error: variable index should be non-negative\n");
+	}
+	else
+	{
+		map<unsigned int, int>::iterator it;
 
+		// check if this localvar exists in map
+		// find returns ptr to end of map on failure to find key
+		it = localVars.find(n);
+		if(it != localVars.end())
+		{
+			// localVar exists
+			localVars[n] = localVars[n] + x;
+		}
+		else
+		{
+			// localVar doesn't exist
+			fprintf(stderr, "Error: local variable %d doesn't exist.", n);
+		}
+	}
+}
 
 void jvm::jvm_ifeq(string& label)
 {
@@ -178,18 +202,6 @@ void jvm::execute()
 	this->pc = 0;
 	while(true)
 	{
-		// update program counter
-		// if a branch instr was executed in previous step, then don't 
-		// update pc, just use it
-		if(this->pc != 0 && this->pc == currentPC)
-		{
-			this->pc++;
-			currentPC++;
-		}
-		else
-		{
-			currentPC = this->pc;
-		}
 		// check that pc points to valid instruction
 		if(this->pc < this->instructions.size())
 		{
@@ -211,6 +223,20 @@ void jvm::execute()
 			// exit
 			break;
 		}
+
+		// update program counter
+		// if a branch instr was executed in previous step, then don't 
+		// update pc, just use it
+		if(this->pc == currentPC)
+		{
+			this->pc++;
+			currentPC++;
+		}
+		else
+		{
+			currentPC = this->pc;
+		}
+		
 
 	}
 }

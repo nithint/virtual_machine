@@ -243,16 +243,17 @@ void jc::jc_div()
 		cout << "error: stack emtpy" << endl;
 		return;
 	}
-	int top1 = stackPtr->Pop();
-	int top2 = stackPtr->Pop();
+	// check if divisior is zero before popping
+	int top1 = stackPtr->Peek();
 	if(top1 == 0)
 	{
-		fprintf(stderr, "Error: division by zero attempted.");
+		fprintf(stderr, "Error: division by zero attempted.\n");
+		return;
 	}
-	else
-	{
-		stackPtr->Push(top2/top1);
-	}
+
+	top1 = stackPtr->Pop();
+	int top2 = stackPtr->Pop();
+	stackPtr->Push(top2/top1);
 }
 
 //INSTR:p:Just print the tos without popping

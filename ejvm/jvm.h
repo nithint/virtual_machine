@@ -37,14 +37,14 @@ protected:
 	// program counter
 	unsigned int pc;
 	//The unconditional jump instructions
-	void  jvm_goto(std::string& label);
+	virtual void  jvm_goto(std::string& label);
 	//Conditional jump instr
-	void jvm_ifeq(std::string& label);
-	void jvm_ifne(std::string& label);
-	void jvm_iflt(std::string& label);
-	void jvm_ifgt(std::string& label);
-	//Increment instruction
-	void jvm_inc(int , int);
+	virtual void jvm_ifeq(std::string& label);
+	virtual void jvm_ifne(std::string& label);
+	virtual void jvm_iflt(std::string& label);
+	virtual void jvm_ifgt(std::string& label);
+	//Increment instruction where n is local var and x is the amount to increment by
+	virtual void jvm_inc(int n, int x);
 
 
 public:

@@ -1,5 +1,8 @@
 #include "ejvm.h"
-
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <iterator>
 
 /**
 * convert string to number
@@ -14,6 +17,68 @@ bool tryParse(T& t,const std::string& s)
 
 ejvm::~ejvm(void)
 {
+}
+
+void ejvm::execute()
+{
+	unsigned int currentPC = 0;
+	this->pc = 0;
+	// find index of main function
+	unsigned int mainPos = 0;
+	std::map<std::string, unsigned int>::iterator position;
+		position = this->symbolTable.find(MAIN);
+		if(position != this->symbolTable.end())
+		{
+			mainPos = position->second;
+		}
+		else
+		{  
+			cout<<"Error:No main subroutine found in program."<<endl;
+			exit(0);
+		}
+		this->pc = mainPos;
+		currentPC = mainPos;
+		// push main function on function calls stack
+		this->fnCalls.push(MAIN);
+
+		// keep going as long as there is some function to execute
+		while(!this->fnCalls.empty())
+	{
+		// update program counter
+		// if a branch instr was executed in previous step, then don't 
+		// update pc, just use it
+		if(this->pc != mainPos && this->pc == currentPC)
+		{
+			this->pc++;
+			currentPC++;
+		}
+		else
+		{
+			currentPC = this->pc;
+		}
+		// check that pc points to valid instruction
+		if(this->pc < this->instructions.size())
+		{
+			// valid loc - execute instruction
+			vector<string> parts = vector<string>();
+			string instr = this->instructions.at(this->pc);
+
+			// tokenize line
+			istringstream iss(instr);
+			copy(istream_iterator<string>(iss),
+				istream_iterator<string>(),
+				back_inserter<vector<string> >(parts));
+			// execute
+			this->execute(parts);
+		}
+		else
+		{
+			// out of bounds 
+			cout << "Invalid instruction address " << this->pc << " referenced." << endl;
+			exit(0);
+		}
+
+	}
 }
 
 void ejvm::execute(vector<string> commandParts)
@@ -101,6 +166,8 @@ void ejvm::execute(vector<string> commandParts)
 		{
 			this->stackPtr->Push(NULL);
 		}
+		// push the new subroutine call to call trace stack
+		this->fnCalls.push(string(method));
 		// finally, set pc to callee func
 		this->pc = subroutineIndex;
 	}
@@ -118,6 +185,8 @@ void ejvm::execute(vector<string> commandParts)
 		this->pc = stackPtr->Pop();
 		// push the result on stack
 		stackPtr->Push(result);
+		// pop the function from the call trace stack
+		this->fnCalls.pop();
 	}
 
 	void ejvm::ejvm_fetch(unsigned int localVar, int index)
@@ -133,10 +202,10 @@ void ejvm::execute(vector<string> commandParts)
 	int ejvm::ejvm_frame(int index)
 	{
 		// retrieve fp + index
-		int index = this->fp + index;
-		if(index > 0 && index < stackPtr->Get_top())
+		int indexToGet = this->fp + index;
+		if(indexToGet >= 0 && indexToGet < stackPtr->Get_top())
 		{
-			return this->stackPtr->Get_element(index);
+			return this->stackPtr->Get_element(indexToGet);
 		}
 		else
 		{
@@ -168,8 +237,20 @@ void ejvm::execute(vector<string> commandParts)
 		stackPtr->Set_element(index,value);
 	}
 
+	void ejvm::jvm_inc(int n, int x)
+	{
+		if(n < 0)
+		{
+			fprintf(stderr, "Error: variable index should be non-negative\n");
+			return;
+		}
+		int index = fp+n+1;
+		stackPtr->Set_element(index, stackPtr->Get_element(index)+x);
+	}
+
 	ejvm::ejvm(int sz, vector<string> instrs, map<string, unsigned int> symTable)
 		: super(sz, instrs, symTable)
 	{
 		this->limits = map<string, unsigned int>();
+		this->fnCalls = stack<string>();
 	}

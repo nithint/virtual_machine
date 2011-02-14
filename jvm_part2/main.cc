@@ -9,10 +9,9 @@
 #include <math.h>
 #include <vector>
 #include <string>
-#include <math.h>
 
-using namespace std;
 using std::cout;
+using namespace std;
 
 /*
 main function reads in command from file
@@ -25,7 +24,7 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	ifstream fin(string(argv[1]));
+	ifstream fin(argv[1]);
 
 	if(!fin)
 	{
@@ -35,7 +34,6 @@ int main(int argc, char *argv[])
 
 	// read in the file line by line
 	string str;
-	vector<string> parts = vector<string>();
 	vector<string> instrs = vector<string>();
 	map<string, unsigned int> symTable = map<string, unsigned int>();
 
@@ -44,7 +42,8 @@ int main(int argc, char *argv[])
 		// skip over empty lines
 		if(str.length() == 0)
 			continue;
-
+		
+		vector<string> parts = vector<string>();
 		// tokenize line
 		istringstream iss(str);
 		copy(istream_iterator<string>(iss),
