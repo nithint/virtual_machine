@@ -23,39 +23,16 @@ void ejvm::execute()
 {
 	unsigned int currentPC = 0;
 	this->pc = 0;
-	// find index of main function
-	unsigned int mainPos = 0;
-	std::map<std::string, unsigned int>::iterator position;
-		position = this->symbolTable.find(MAIN);
-		if(position != this->symbolTable.end())
-		{
-			mainPos = position->second;
-		}
-		else
-		{  
-			cout<<"Error:No main subroutine found in program."<<endl;
-			exit(0);
-		}
-		this->pc = mainPos;
-		currentPC = mainPos;
-		// push main function on function calls stack
-		this->fnCalls.push(MAIN);
+	
+	// invoke main
+	string main = MAIN;
+	this->ejvm_invoke(main);
+	// set current pc to main method's position
+	currentPC = this->pc;
 
-		// keep going as long as there is some function to execute
-		while(!this->fnCalls.empty())
+	// keep going as long as there is some function to execute
+	while(!this->fnCalls.empty())
 	{
-		// update program counter
-		// if a branch instr was executed in previous step, then don't 
-		// update pc, just use it
-		if(this->pc != mainPos && this->pc == currentPC)
-		{
-			this->pc++;
-			currentPC++;
-		}
-		else
-		{
-			currentPC = this->pc;
-		}
 		// check that pc points to valid instruction
 		if(this->pc < this->instructions.size())
 		{
@@ -77,7 +54,18 @@ void ejvm::execute()
 			cout << "Invalid instruction address " << this->pc << " referenced." << endl;
 			exit(0);
 		}
-
+		// update program counter
+		// if a branch instr was executed in previous step, then don't 
+		// update pc, just use it
+		if(this->pc == currentPC)
+		{
+			this->pc++;
+			currentPC++;
+		}
+		else
+		{
+			currentPC = this->pc;
+		}
 	}
 }
 
@@ -173,7 +161,7 @@ void ejvm::execute(vector<string> commandParts)
 	}
 	void ejvm::ejvm_return()
 	{
-		int result;
+		int result=-1;
 		// pop off callee's stack and store the result from callee
 		// result is always the last item popped
 		while(stackPtr->Get_top() > (this->fp+1))
@@ -248,9 +236,10 @@ void ejvm::execute(vector<string> commandParts)
 		stackPtr->Set_element(index, stackPtr->Get_element(index)+x);
 	}
 
-	ejvm::ejvm(int sz, vector<string> instrs, map<string, unsigned int> symTable)
+	ejvm::ejvm(int sz, vector<string> instrs, map<string, unsigned int> symTable,
+		map<string, unsigned int> limits)
 		: super(sz, instrs, symTable)
 	{
-		this->limits = map<string, unsigned int>();
+		this->limits = limits;
 		this->fnCalls = stack<string>();
 	}

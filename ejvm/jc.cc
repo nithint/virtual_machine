@@ -133,6 +133,10 @@ void jc::execute(vector<string> commandParts)
 		{
 			this->jc_div();
 		}
+		else if (commandParts.at(0).compare("pop") == 0)
+		{
+			this->jc_pop();
+		}
 		else
 		{
 			// undefined command

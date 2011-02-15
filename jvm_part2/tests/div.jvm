@@ -1,0 +1,19 @@
+const 51
+const 17
+
+store 1
+store 0
+
+load 0
+load 1
+div
+load 1
+mul
+load 0
+sub
+ifne no_divides
+const 1
+goto done
+no_divides: const 0
+done: p
+ 

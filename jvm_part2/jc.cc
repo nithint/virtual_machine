@@ -1,7 +1,7 @@
 /*
- * jc.cc
+ * jc.cc for jvm
  *
- *  Created on: Jan 23, 2011
+ *  Created on: Fed 1, 2011
  */
 
 #include "jc.h"
@@ -30,43 +30,6 @@ bool tryParse(T& t,
   return !(iss >> t).fail();
 }
 
-	// main function: reads instructions from commandline one by one and executes them
-int main(int argc, char *argv[])
-{
-	jc calc(1000);
-	string command;
-
-	while(!(command == "q"))
-	{
-		cout << "Enter a command (q to quit): ";
-		getline(cin,command);
-
-		// quit on q
-		if(command.compare("q") == 0)
-			exit(0);
-
-		// if empty, continue
-		if(command.length()==0)
-			continue;
-		
-		vector<string> parts = vector<string>();
-
-		// tokenize attributes
-		istringstream iss(command);
-		copy(istream_iterator<string>(iss),
-		istream_iterator<string>(),
-		back_inserter<vector<string> >(parts));
-
-		/*for(unsigned int i = 0; i < parts.size(); i++)
-		{
-			cout << parts.at(i) << endl;
-		}*/
-		
-		calc.execute(parts);
-	}
-
-  return 0;
-}
 
 /** CONSTRUCTORS/DESTRUCTORS **/
 

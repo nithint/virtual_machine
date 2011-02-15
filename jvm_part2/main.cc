@@ -13,6 +13,12 @@
 using std::cout;
 using namespace std;
 
+void trim(string& str)
+{
+	str.erase(str.find_last_not_of(" \t")+1);
+	str.erase(0,str.find_first_not_of(" \t"));
+}
+
 /*
 main function reads in command from file
 */
@@ -39,6 +45,7 @@ int main(int argc, char *argv[])
 
 	while(getline(fin,str))
 	{
+		trim(str);
 		// skip over empty lines
 		if(str.length() == 0)
 			continue;

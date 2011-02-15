@@ -1,0 +1,5 @@
+const 5
+store 0
+load 0
+load -4
+p

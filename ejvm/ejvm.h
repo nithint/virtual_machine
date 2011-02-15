@@ -15,7 +15,8 @@ class ejvm :
 public:
 	// base class (jvm)
 	typedef jvm super;
-	ejvm(int sz, vector<string> instrs, map<string, unsigned int> symTable);
+	ejvm(int sz, vector<string> instrs, map<string, unsigned int> symTable, 
+		map<string, unsigned int> limits);
 	~ejvm(void);
 	
 	// execute over the whole set of instructions
