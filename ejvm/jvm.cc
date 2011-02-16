@@ -202,18 +202,6 @@ void jvm::execute()
 	this->pc = 0;
 	while(true)
 	{
-		// update program counter
-		// if a branch instr was executed in previous step, then don't 
-		// update pc, just use it
-		if(this->pc != 0 && this->pc == currentPC)
-		{
-			this->pc++;
-			currentPC++;
-		}
-		else
-		{
-			currentPC = this->pc;
-		}
 		// check that pc points to valid instruction
 		if(this->pc < this->instructions.size())
 		{
@@ -236,5 +224,18 @@ void jvm::execute()
 			break;
 		}
 
+		// update program counter
+		// if a branch instr was executed in previous step, then don't 
+		// update pc, just use it
+		if(this->pc == currentPC)
+		{
+			this->pc++;
+			currentPC++;
+		}
+		else
+		{
+			currentPC = this->pc;
+		}
+		
 	}
 }

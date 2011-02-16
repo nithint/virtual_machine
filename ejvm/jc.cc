@@ -169,7 +169,18 @@ void jc::jc_store(int n)
 	else
 	{
 		topElement = stackPtr->Pop();
-		localVars.insert(make_pair(n, topElement));
+		map<unsigned int, int>::iterator it;
+
+		// check if this localvar exists in map
+		// find returns ptr to end of map on failure to find key
+		it = localVars.find(n);
+		if(it == localVars.end())
+		{
+			// doesn't exist, create new
+			localVars.insert(make_pair(n, topElement));
+		}
+		else
+			localVars[n] = topElement;
 	}
 }
 
