@@ -217,6 +217,14 @@ void ejvm::execute(vector<string> commandParts)
 			fprintf(stderr, "Error: variable index should be non-negative\n");
 			return;
 		}
+
+		int localVarLimit = this->getCurrentMethodLimit();
+		if(n >= localVarLimit)
+		{
+			fprintf(stderr, "Error: local variable %d doesn't exist.\n", n);
+			return;
+		}
+
 		int value = this->ejvm_frame(n+1);
 		this->jc_push(value);
 	}
@@ -228,9 +236,48 @@ void ejvm::execute(vector<string> commandParts)
 			fprintf(stderr, "Error: variable index should be non-negative\n");
 			return;
 		}
+
+		int localVarLimit = this->getCurrentMethodLimit();
+		if(n >= localVarLimit)
+		{
+			fprintf(stderr, "Error: local variable %d doesn't exist.\n", n);
+			return;
+		}
+
+		if(isStackEmpty())
+		{
+			fprintf(stderr, "Error: stack is empty.\n");
+			return;
+		}
+
 		int index = fp+n+1;
 		int value = stackPtr->Pop();
 		stackPtr->Set_element(index,value);
+	}
+
+	int ejvm::jc_pop()
+	{
+		if(isStackEmpty())
+		{
+			fprintf(stderr, "Error: stack is empty.\n");
+			return 0;
+		}
+
+		return stackPtr->Pop();
+	}
+
+	int ejvm::getCurrentMethodLimit()
+	{
+		string currMethod = this->fnCalls.top();
+		return this->limits.at(currMethod);
+	}
+
+	bool ejvm::isStackEmpty()
+	{
+		int limit = this->getCurrentMethodLimit();
+		if(this->stackPtr->Get_top() > this->fp+1+limit)
+			return false;
+		return true;
 	}
 
 	void ejvm::jvm_inc(int n, int x)

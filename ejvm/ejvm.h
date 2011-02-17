@@ -28,7 +28,8 @@ protected:
 	unsigned int fp;
 	// limit of local vars allowed in a subroutine
 	map<string, unsigned int> limits;
-
+	virtual bool isStackEmpty();
+	virtual int getCurrentMethodLimit();
 	virtual void ejvm_invoke(string& label);
 	virtual void ejvm_return();
 	virtual void ejvm_fetch(unsigned int localVar, int index);
@@ -41,6 +42,8 @@ protected:
 	//INSTR:store n:pop tos and store the value into local variable n
 	// redefined to use stack instead of separate data structure
 	virtual void jc_store(int n);
+	// pop the top element from stack. redefined for new stack layout
+	virtual int jc_pop();
 	//Increment instruction where n is local var and x is the amount to increment by
 	virtual void jvm_inc(int n, int x);
 };
