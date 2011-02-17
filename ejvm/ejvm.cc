@@ -152,7 +152,7 @@ void ejvm::execute(vector<string> commandParts)
 		// allocate limit # of local vars for callee func
 		for(int i = 0; i < subroutineLimit; i++)
 		{
-			this->stackPtr->Push(NULL);
+			this->stackPtr->Push(0); // push null on stack
 		}
 		// push the new subroutine call to call trace stack
 		this->fnCalls.push(string(method));
@@ -161,7 +161,14 @@ void ejvm::execute(vector<string> commandParts)
 	}
 	void ejvm::ejvm_return()
 	{
+		bool voidMethod = false;
+		if(!(stackPtr->Get_top() > (this->fp+1)))
+		{
+			// no variables to pop off, ie, a void method
+			voidMethod = true;
+		}
 		int result=-1;
+
 		// pop off callee's stack and store the result from callee
 		// result is always the last item popped
 		while(stackPtr->Get_top() > (this->fp+1))
@@ -171,8 +178,9 @@ void ejvm::execute(vector<string> commandParts)
 		this->fp = stackPtr->Pop();
 		// set pc
 		this->pc = stackPtr->Pop();
-		// push the result on stack
-		stackPtr->Push(result);
+		// push the result on stack if not void method
+		if(!voidMethod)
+			stackPtr->Push(result);
 		// pop the function from the call trace stack
 		this->fnCalls.pop();
 	}
