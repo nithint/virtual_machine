@@ -1,0 +1,26 @@
+.method sub 
+.limit 1    
+fetch 0 -2
+
+inc 0 -1
+load 0
+p
+ifeq endfn
+load 0
+invoke sub
+endfn: return  
+return
+
+
+.method main  
+.limit 0      
+const 10    
+invoke sub  
+
+const 1000 
+const 200 
+ p
+pop
+p
+ 
+return    
