@@ -2,8 +2,8 @@ CS6397_Programming Assignment 1:
 
 Student names:
 ==============
-Nithin Thomas (nxt054000 at utdallas dot edu)
-Girish Deshpande (grd091020 at utdallas dot edu)
+Nithin Thomas ()
+Girish Deshpande ()
 
 PART 1:java style stack based calculator
 ========================================
